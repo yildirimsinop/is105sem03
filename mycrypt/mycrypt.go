@@ -2,14 +2,14 @@ package mycrypt
 
 var ALF_SEM03 []rune = []rune("abcdefghijklmnopqrstuvwxyzæøå0123456789.,:; ")
 
-func Krypter(melding []rune, chiffer []rune, caesarForsyvning int) []rune {
+func Krypter(melding []rune, alphabet []rune, chiffer int) []rune {
 	kryptertMelding := make([]rune, len(melding))
 	for i := 0; i < len(melding); i++ {
-		indeks := sokIAlfabetet(melding[i], chiffer)
-		if indeks+caesarForsyvning >= len(chiffer) {
-			kryptertMelding[i] = chiffer[indeks+caesarForsyvning-len(chiffer)]
+		indeks := sokIAlfabetet(melding[i], alphabet)
+		if indeks+chiffer >= len(alphabet) {
+			kryptertMelding[i] = alphabet[indeks+chiffer-len(alphabet)]
 		} else {
-			kryptertMelding[i] = chiffer[indeks+caesarForsyvning]
+			kryptertMelding[i] = alphabet[indeks+chiffer]
 		}
 	}
 	return kryptertMelding

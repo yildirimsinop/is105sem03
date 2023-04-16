@@ -5,25 +5,45 @@ import (
 	"testing"
 )
 
-// Kjevik;SN39040;18.03.2022 01:50;6
-// var ALF_SEM03 []rune = []rune("abcdefghijklmnopqrstuvwxyzæøå0123456789.,:; ")
+// Testene forutsetter et alfabet, som er definert i mycrypt.go som ALF_SEM03
 
-// Testen feiler, siden æ ligger tre posisjoner til høyre fra x
-// Testen skal passere, hvis man tester for w istedenfor x
 func TestKrypter(t *testing.T) {
-	wanted := []rune("æ")
-	state := Krypter([]rune("w"), ALF_SEM03, 4)
-	if !reflect.DeepEqual(state, wanted) {
-		t.Errorf("Feil, fikk %q, ønsket %q.", state, wanted)
+
+	type test struct {
+		inputMessage []rune
+                chiffer int
+		want  []rune
+	}
+	tests := []test{
+		{inputMessage: []rune("w"), chiffer: 4, want: []rune("æ")},
+		{inputMessage: []rune("0"), chiffer: 4, want: []rune("4")},
+		{inputMessage: []rune("Kjevik;SN39040;18.03.2022 01:50;6"), chiffer: 4, want: []rune("dnizmocdd7;484c5: 47 6466d45b94c.")},
+                {inputMessage: []rune("dnizmocdd7;484c5: 47 6466d45b94c."), chiffer: len(ALF_SEM03) - 4, want: []rune("Kjevik;SN39040;18.03.2022 01:50;6")},
+	}
+
+	for _, tc := range tests {
+		got := Krypter(tc.inputMessage, ALF_SEM03, tc.chiffer)
+		if !reflect.DeepEqual(got, tc.want) {
+			t.Errorf("Feil, for chiffer %d, fikk %q, ønsket %q.", tc.chiffer, got, tc.want)
+		}
 	}
 }
 
-// Tester posisjon for rune 'æ' i ALF_SEM03
-// (begynner på 0 teller fra venstre til høyre)
+// Posisjonene i alfabetet begynner på 0 fra venstre og teller oppover mot høyre
 func TestSokIAlfabetet(t *testing.T) {
-	wanted := 26
-	got := sokIAlfabetet('æ', ALF_SEM03)
-	if got != wanted {
-		t.Errorf("Feil, fikk %d, ønsket %d.", got, wanted)
+	type test struct {
+		input rune
+		want  int
+	}
+	tests := []test{
+		{input: 'æ', want: 26},
+		{input: 'a', want: 0},
+	}
+
+	for _, tc := range tests {
+		got := sokIAlfabetet(tc.input, ALF_SEM03)
+		if got != tc.want {
+			t.Errorf("Feil, fikk %d, ønsket %d.", got, tc.want)
+		}
 	}
 }
